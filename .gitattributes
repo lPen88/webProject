@@ -1,1 +1,2 @@
 dataset/*.csv filter=lfs diff=lfs merge=lfs -text
+bert_informativeness_final/model.safetensors filter=lfs diff=lfs merge=lfs -text
