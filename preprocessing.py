@@ -326,7 +326,7 @@ def calculate_quality_score(text):
     factual_words = ['because', 'since', 'due to', 'reason', 'caused', 'result', 'therefore',
                     'however', 'although', 'despite', 'while', 'whereas', 'specifically']
 
-    # Helper to get synonyms from WordNet
+    # sinonimi da WordNet
     def get_synonyms(word):
         synonyms = set()
         for syn in wordnet.synsets(word):
@@ -336,7 +336,7 @@ def calculate_quality_score(text):
                     synonyms.add(synonym)
         return synonyms
 
-    # Expand lists with synonyms
+    #wrapper di sopra per espandere le liste
     def expand_with_synonyms(word_list):
         expanded = set(word_list)
         for word in word_list:
@@ -350,17 +350,19 @@ def calculate_quality_score(text):
     factual_count = sum(1 for word in factual_words if word in text_lower)
     
     total_indicators = emotional_count + factual_count
+
+    # se è zero gli infilo 0.5
     if total_indicators == 0:
         balance_score = 0.5
     else:
-        # Better balance = more informative (slight preference for factual)
+        # ratio tra fattuali e emotivi
         factual_ratio = factual_count / total_indicators
-        if factual_ratio >= 0.4:  # Good balance or more factual
+        if factual_ratio >= 0.4:  # naturalmente più è alto meglio è
             balance_score = 1.0
         elif factual_ratio >= 0.2:
             balance_score = 0.8
         else:
-            balance_score = 0.6  # Too emotional
+            balance_score = 0.6
     
     # Grammar and structure indicators
     question_marks = text.count('?')
@@ -386,7 +388,7 @@ def calculate_quality_score(text):
     actionable_count = sum(1 for word in actionable_words if word in text_lower)
     actionable_score = min(actionable_count / 2, 1.0)
     
-    # Combined quality score
+    # sbatto tutto insieme
     quality_score = (readability_score * 0.3 + balance_score * 0.3 + 
                     structure_score * 0.2 + actionable_score * 0.2)
     

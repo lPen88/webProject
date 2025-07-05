@@ -1,1 +1,0 @@
-qui non ci ho potuto mettere i csv perchè sono troppo grandi
