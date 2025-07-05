@@ -13,18 +13,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import re
-from collections import Counter
-from textstat import flesch_reading_ease, flesch_kincaid_grade
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+from textstat import flesch_reading_ease
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize, sent_tokenize
-from nltk import pos_tag
+from nltk.tokenize import sent_tokenize
 from nltk.corpus import wordnet
 
 # Download required NLTK data
@@ -422,7 +414,7 @@ print(df.head(1))
 
 
 ##################################################
-############### VALUTAZIONE FINALE ###############
+############## VALUTAZIONE FINALE ################
 ##################################################
 
 df['combined_score'] = (df['length_score'] * 0.3 + 
@@ -481,3 +473,7 @@ for i, (idx, row) in enumerate(least_informative.iterrows(), 1):
     print(f"Scores - Length: {row['length_score']:.2f}, Specificity: {row['specificity_score']:.2f}, Quality: {row['quality_score']:.2f}")
     print(f"Text: {row['review_text'][:300]}{'...' if len(row['review_text']) > 300 else ''}")
     print("-" * 80)
+
+
+save_df = df[['review_text', 'is_informative', 'combined_score']]
+save_df.to_csv('dataset/train_informative.csv', index=False)
