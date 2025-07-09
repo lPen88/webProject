@@ -1,0 +1,7 @@
+
+9000 ENTRY PERCHè CI IL RUNTIME COLAB SI INTERROMPEVA CON PIù DI QUESTO
+
+finito: TrainOutput(global_step=3150, training_loss=0.17746987665752098, metrics={'train_runtime': 4269.3915, 'train_samples_per_second': 2.951, 'train_steps_per_second': 0.738, 'total_flos': 3315199297536000.0, 'train_loss': 0.17746987665752098, 'epoch': 2.0})
+ [338/338 00:41]
+valutazione test set: {'eval_loss': 0.301134318113327, 'eval_accuracy': 0.9481481481481482, 'eval_runtime': 41.9645, 'eval_samples_per_second': 32.17, 'eval_steps_per_second': 8.054, 'epoch': 2.0}
+modello salvato in: ./bert_model
