@@ -12,10 +12,12 @@ from transformers import (
     TrainingArguments
 )
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.metrics import accuracy_score
 import warnings
+from huggingface_hub import hf_hub_download, login
+from huggingface_hub import HfApi
+import shutil
+import os
 warnings.filterwarnings('ignore')
 
 torch.manual_seed(42)
@@ -41,7 +43,8 @@ class ReviewDataset(Dataset):
         text = str(self.texts[idx])
         label = self.labels[idx]
         
-        # Tokenize text
+        # questo viene chiamato in automatico tra trainer
+        # o almeno così ho capito
         encoding = self.tokenizer(
             text,
             truncation=True,
@@ -58,26 +61,12 @@ class ReviewDataset(Dataset):
 
 
 def balance_dataset(df):
-    """questa bilancia il dataset"""
     
-    informative_reviews = df[df['is_informative'] == 1]
-    non_informative_reviews = df[df['is_informative'] == 0]
-    
-    print(f"originale:")
-    print(f"    Informative: {len(informative_reviews)}")
-    print(f"    Non-informative: {len(non_informative_reviews)}")
-    
-    # prendo la classe che tiene meno campioni e uso quella come base per il bilanciamento
-    min_samples = min(len(informative_reviews), len(non_informative_reviews))
-    
-    balanced_informative = informative_reviews.sample(n=min_samples, random_state=42)
-    balanced_non_informative = non_informative_reviews.sample(n=min_samples, random_state=42)
-    
-    balanced_df = pd.concat([balanced_informative, balanced_non_informative]).sample(frac=1, random_state=42).reset_index(drop=True)
-    
-    print(f"bilanciato:")
-    print(f"  Informative: {balanced_df['is_informative'].sum()}")
-    print(f"  Non-informative: {len(balanced_df) - balanced_df['is_informative'].sum()}")
+    # Prendi 4500 campioni per ciascuna classe (0 e 1)
+    # sono 9000 in tutto perchè colab poi vuole che pago (stronzi)
+    class_0 = df[df['is_informative'] == 0].sample(n=4500, random_state=42)
+    class_1 = df[df['is_informative'] == 1].sample(n=4500, random_state=42)
+    balanced_df = pd.concat([class_0, class_1]).sample(frac=1, random_state=42).reset_index(drop=True)
     
     return balanced_df
 
@@ -91,14 +80,17 @@ def compute_metrics(eval_pred):
     
     return {'accuracy': accuracy}
 
+repo = "GOAISI/webProject"
+login()
 
-
-df = pd.read_csv('dataset/train_informative.csv')
+#questo scarica il csv e lo infila da qualche parte in .cache, restituisce il path
+csv_path = hf_hub_download(repo_id=repo, filename="dataset/train_informative.csv")
+df= pd.read_csv(csv_path)
 balanced_df = balance_dataset(df)
 
 
-X = df['review_text'].values
-y = df['is_informative'].values
+X = balanced_df['review_text'].values
+y = balanced_df['is_informative'].values
 
 
 X_train, X_temp, y_train, y_temp = train_test_split(
@@ -173,7 +165,20 @@ print(f"finito: {training_output}")
 test_results = trainer.evaluate(test_dataset)
 print(f"valutazione test set: {test_results}")
 
+#lo salvo prima in locale perchè non sono sicuro se trainer è già il modello o se me lo tira fuori save_model(...)
 model_save_path = './bert_model'
 trainer.save_model(model_save_path)
 tokenizer.save_pretrained(model_save_path)
 print(f"modello salvato in: {model_save_path}")
+
+#lo carico su Hugging Face
+tokenizer = BertTokenizer.from_pretrained(model_save_path)
+model = BertForSequenceClassification.from_pretrained(model_save_path)
+
+
+model.push_to_hub(repo)
+tokenizer.push_to_hub(repo)
+
+if os.path.exists(model_save_path):
+    shutil.rmtree(model_save_path)
+    print(f"Cartella temporanea '{model_save_path}' eliminata.")

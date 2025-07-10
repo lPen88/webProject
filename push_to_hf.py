@@ -3,7 +3,7 @@
 
 import os
 from transformers import BertTokenizer, BertForSequenceClassification
-from huggingface_hub import HfApi, login, upload_file
+from huggingface_hub import HfApi, login
 import glob
 
 def push_model_to_hf():

@@ -18,6 +18,10 @@ from textstat import flesch_reading_ease
 import nltk
 from nltk.tokenize import sent_tokenize
 from nltk.corpus import wordnet
+from huggingface_hub import hf_hub_download, login
+from huggingface_hub import HfApi
+import shutil
+import os
 
 # Download required NLTK data
 try:
@@ -40,11 +44,13 @@ try:
 except LookupError:
     nltk.download('wordnet')
 
-df = pd.read_csv('dataset/train.csv')
+repo = "GOAISI/webProject"
+login()
 
-# SOLO PER TESTING SENNO' CI METTI UNA VITA
-df = df.head(2000).copy()
 
+
+train_file = hf_hub_download(repo_id=repo, filename="dataset/train.csv")
+df = pd.read_csv(train_file)
 
 print(df.shape)
 print(df.columns.tolist())
@@ -478,4 +484,21 @@ for i, (idx, row) in enumerate(least_informative.iterrows(), 1):
 
 
 save_df = df[['review_text', 'is_informative', 'combined_score']]
-save_df.to_csv('dataset/train_informative.csv', index=False)
+
+# Salvo sulla repo
+
+fileName = "train_informativeTOT.csv"
+os.makedirs("temp", exist_ok=True)
+save_df.to_csv(f"temp/{fileName}", index=False)
+
+api = HfApi()
+api.upload_file(
+    path_or_fileobj=f"temp/{fileName}",
+    path_in_repo=f"dataset/{fileName}",
+    repo_id=repo,
+    repo_type="model"
+)
+print(f"Saved and uploaded {fileName} to the repo.")
+
+if os.path.exists("temp"):
+    shutil.rmtree("temp")
