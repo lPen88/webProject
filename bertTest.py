@@ -1,6 +1,6 @@
 from transformers import BertTokenizer, BertForSequenceClassification
 
-model_dir = "bert_model"
+model_dir = "lPen88/webProject"
 tokenizer = BertTokenizer.from_pretrained(model_dir)
 model = BertForSequenceClassification.from_pretrained(model_dir)
 

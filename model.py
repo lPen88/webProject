@@ -4,14 +4,18 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
-import joblib
+from huggingface_hub import hf_hub_download
 
-# Load dataset
-df = pd.read_csv('dataset/test_informative.csv')
+
+# Download dataset files
+train_file = hf_hub_download(repo_id="lPen88/webProject", filename="dataset/train_informative.csv")
+df = pd.read_csv(train_file)
+
+print(df.head())
 
 # Features and target
 X = df['review_text']
-y = df['informativeness_level']
+y = df['is_informative']
 
 # Split data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
