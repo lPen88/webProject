@@ -5,7 +5,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report
 from huggingface_hub import hf_hub_download
+from huggingface_hub import login
 
+
+login()
 
 # Download dataset files
 train_file = hf_hub_download(repo_id="GOAISI/webProject", filename="dataset/train_informative.csv")
@@ -30,6 +33,7 @@ pipeline = Pipeline([
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
+
 
 pipeline2 = Pipeline([
     ('tfidf', TfidfVectorizer()),
