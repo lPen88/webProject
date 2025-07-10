@@ -10,7 +10,7 @@ def push_model_to_hf():
     # Configuration
     model_path = "bert_model"  # Your local model directory
     dataset_path = "dataset"   # Your dataset directory
-    repo_name = "lPen88/webProject"  # Change this to your desired repo name
+    repo_name = "GOAISI/webProject"  # Change this to your desired repo name
     
     print("Step 1: Loading your trained model...")
     # Load your trained model and tokenizer

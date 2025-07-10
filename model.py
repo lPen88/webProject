@@ -8,7 +8,7 @@ from huggingface_hub import hf_hub_download
 
 
 # Download dataset files
-train_file = hf_hub_download(repo_id="lPen88/webProject", filename="dataset/train_informative.csv")
+train_file = hf_hub_download(repo_id="GOAISI/webProject", filename="dataset/train_informative.csv")
 df = pd.read_csv(train_file)
 
 print(df.head())
