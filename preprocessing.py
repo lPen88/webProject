@@ -52,6 +52,8 @@ login()
 train_file = hf_hub_download(repo_id=repo, filename="dataset/train.csv")
 df = pd.read_csv(train_file)
 
+df = df.head(1000).copy()
+
 print(df.shape)
 print(df.columns.tolist())
 print(df.head(1))
