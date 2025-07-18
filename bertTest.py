@@ -26,7 +26,7 @@ def predict_informativeness(text):
 df = pd.read_csv(csv_path)
 
 
-y_true = df['is_informative'].tolist()  # Replace with your actual label column name
+y_true = df['is_informative'].tolist()
 y_pred = [predict_informativeness(text) for text in df['review_text']]
 
 report = classification_report(y_true, y_pred, target_names=["Not Informative", "Informative"])

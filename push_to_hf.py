@@ -7,27 +7,26 @@ from huggingface_hub import HfApi, login
 import glob
 
 def push_model_to_hf():
-    # Configuration
-    model_path = "bert_model"  # Your local model directory
-    dataset_path = "dataset"   # Your dataset directory
-    repo_name = "GOAISI/webProject"  # Change this to your desired repo name
     
-    print("Step 1: Loading your trained model...")
-    # Load your trained model and tokenizer
+    model_path = "bert_model"   # path locale del modello
+    dataset_path = "dataset"   # path dataset
+    repo_name = "GOAISI/webProject"  # repo
+    
+    
     tokenizer = BertTokenizer.from_pretrained(model_path)
     model = BertForSequenceClassification.from_pretrained(model_path)
     
-    print("Step 2: Login to Hugging Face...")
-    # You'll need to login first - this will prompt for your token
+    # tieni pronto il token di accesso
+    # è quello che trovi in https://huggingface.co/settings/tokens
+    # ASSICURATI DI AVERLO COPIATO PERCHE' NON PUOI PIÙ VEDERLO DOPO
     login()
     
-    print("Step 3: Pushing model to Hugging Face Hub...")
-    # Push the model to Hugging Face Hub
+    
+    # butta il modello
     model.push_to_hub(repo_name)
     tokenizer.push_to_hub(repo_name)
     
-    print("Step 4: Uploading dataset files...")
-    # Upload dataset files
+    # butta i dataset
     api = HfApi()
     dataset_files = glob.glob(os.path.join(dataset_path, "*.csv"))
     
@@ -42,7 +41,9 @@ def push_model_to_hf():
         )
     
     print("Step 5: Uploading README (model card)...")
-    # Upload the model card as README.md
+    
+    # il readme l'ha generato completamente copilot
+    # idc
     readme_file = "model_card_template.md"
     if os.path.exists(readme_file):
         print(f"  Uploading {readme_file} as README.md...")
@@ -61,17 +62,4 @@ def push_model_to_hf():
     print(f"✅ All datasets and code files uploaded")
 
 if __name__ == "__main__":
-    # Before running this script, make sure you have:
-    # 1. Created a Hugging Face account at https://huggingface.co/
-    # 2. Created an access token at https://huggingface.co/settings/tokens
-    # 3. Changed the repo_name above to your desired repository name
-    
-    print("Starting model upload to Hugging Face...")
-    print("Make sure you've updated the 'repo_name' variable above!")
-    
     push_model_to_hf()
-    
-    print("\nTo use this script:")
-    print("1. Update the 'repo_name' variable with your desired repository name")
-    print("2. Uncomment the 'push_model_to_hf()' line")
-    print("3. Run this script")
